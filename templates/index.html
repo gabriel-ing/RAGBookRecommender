@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+</head>
+<body>
+    <div><H1>Book Recommendation Chatbot</H1>
+    <h2>Using Iris Vector Search</h2></div>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <div class="input-container">
+    <form action="/submit" method="POST" id="message-form">
+        <textarea name="prompt" id="user-input" placeholder="I want a book about..." rows="4" required></textarea>
+        <div>
+            <input type="checkbox" id="search-database" name="search-database" checked disabled>
+            <label for="search-database">Search Database</label>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+    </div>
+
+    <script>
+        const messageCount = 0
+        //Form submission - this handles the POST Request when sending a message to the bot (flask backend)
+        document.getElementById("message-form").addEventListener("submit", async function (e) {
+
+            //Stop automatic redirect on form submission
+            e.preventDefault()
+
+            //get user input
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            //check the message is not empty
+            if (message === '') return;
+
+            //create a container for the message and add it to the chatbox
+            const chatBox = document.getElementById('chat-box');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.textContent = message;
+            chatBox.appendChild(userMsg);
+
+            //adds a placeholder for the bot's response and adds a loading spinner            
+            const botMsg = document.createElement('div');
+            botMsg.className = 'message bot';
+            botMsg.innerHTML = "<span class='loader' width=30px></span>"
+            chatBox.appendChild(botMsg);
+
+            // Ensure the checkbox is enabled so that it is included in the POST request
+            const searchCheckbox = document.getElementById("search-database");
+            searchCheckbox.disabled = false;
+
+            //creates a form data object out of the form (user input) being submitted. 
+            const formData= new FormData(this);
+            
+            //empty the input box and adds placeholder (note this needs to be done after formData is created)
+            input.value = "";
+            input.placeholder = "Send another query...";
+
+            //sends message to backend and awaits response.
+            const response = await fetch('/prompt', {method:'POST', body:formData});
+            const result = await response.json();
+
+            //Logs the response from the back end to the console - this is useful for debugging and developing only
+            console.log(result)
+            
+            // Sets the bot's message box contents to the chatbot response
+            botMsg.innerHTML = result.message;
+            // Adds a button to see the search results
+            const sources = document.createElement("div")
+            sources.innerHTML = `<button id='sourcesButton${messageCount}'>Show Sources</button>`
+            botMsg.appendChild(sources)
+
+            // Sets the button's onclick function
+            document.getElementById(`sourcesButton${messageCount}`).addEventListener('click',()=>{showSources(result.searchResults, botMsg)})
+            
+
+            //sets chatbox scroll
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            // Sets the search database option.
+            // The assumed behaviour is to search the database the first time, then not on subsequent occasions, but this gives the option to search again. 
+
+            searchCheckbox.checked=false;
+
+            //increment the message counter (useful for creating unique sources buttons)
+            messageCount +=1 
+        })
+
+        function showSources(searchResults, botMsg) {
+            //creates a table for the database search results and appends it to the bottom of the chatbox message box.
+                const table = document.createElement('table');
+
+                table.innerHTML = "<tr><th>Title</th><th>Author</th><th>GoodReads Rating</th><th>Description</th></tr>"
+                
+                searchResults.forEach(rowData => {
+                const row = document.createElement('tr');
+                rowData.forEach(cellData => {
+                    const cell = document.createElement( 'td');
+                    cell.textContent = cellData;
+                    row.appendChild(cell);
+                });
+                table.appendChild(row);
+                });
+
+                botMsg.appendChild(table);
+
+        }
+
+        // Adds an event listener for the pressing the enter button to submit a message
+        document.getElementById('user-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('message-form').dispatchEvent(new Event('submit', { cancelable: true }));
+    }
+});
+
+    </script>
+</body>
+</html>
