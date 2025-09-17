@@ -8,8 +8,8 @@ Please note, as this is based off of the demo linked above, I've gone into less 
 
 ## Demo
 
-<video src="BookRecommenderClipped.mp4" controls width="600"></video>
-
+<video src="" controls width="600"></video>
+![Video](./BookRecommenderClipped.mp4)
 
 ## Usage 
 
