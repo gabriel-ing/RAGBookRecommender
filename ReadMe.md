@@ -8,8 +8,7 @@ Please note, as this is based off of the demo linked above, I've gone into less 
 
 ## Demo
 
-<video src="" controls width="600"></video>
-![Video](./BookRecommenderClipped.mp4)
+https://github.com/user-attachments/assets/7891c12c-da60-4a46-a774-fc95ad5720aa
 
 ## Usage 
 
