@@ -1,6 +1,6 @@
 # AI book recommender application using IRIS vector search
 
-Example Python implementation vector search using IRIS vector search (using IRIS native for database querying). This example is based off the (hackathon-kit github)[https://github.com/intersystems-community/hackathon-kit/tree/main] and uses a database downloadable from (kaggle)[https://www.kaggle.com/datasets/dylanjcastillo/7k-books-with-metadata]. I ran this from a community edition of iris, downloadable with docker. 
+Example Python implementation vector search using IRIS vector search (using IRIS native for database querying). This example is based off the [hackathon-kit github](https://github.com/intersystems-community/hackathon-kit/tree/main) and uses a database downloadable from [kaggle](https://www.kaggle.com/datasets/dylanjcastillo/7k-books-with-metadata). I ran this from a community edition of iris, downloadable with docker. 
 
 I opted to use a local LLM as this is free to download and use. As a result, this application uses a lot of drive space (the LMM model I use is ~4GB) and takes a long time to provide a response to the query. The responses are also poor compared to standard langauge models available - the model ignores a lot of the system prompt information provided and gives unpredicatable results. As this is for demonstration/learning purposes this is not an issue for me, but for real uses it would be best to use a better LLM.#
 
